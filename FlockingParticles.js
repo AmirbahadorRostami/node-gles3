@@ -1,15 +1,15 @@
-
 const { vec2, vec3, vec4, quat, mat2, mat2d, mat3, mat4} = require("gl-matrix")
 const gl = require('./gles3.js') 
 const glfw = require('./glfw3.js')
 const glutils = require('./glutils.js');
 
 
-if (!glfw.init()) {
-	console.log("Failed to initialize GLFW");
-	process.exit(-1);
+if(!glfw.init()){
+    console.log("Failed to initilize GLWF");
+    process.exit(-1);
 }
-let version = glfw.getVersion();
+
+let version =  glfw.getVersion();
 console.log('glfw ' + version.major + '.' + version.minor + '.' + version.rev);
 console.log('glfw version-string: ' + glfw.getVersionString());
 
@@ -40,6 +40,7 @@ glfw.swapInterval(1); // 0 for vsync off
 let vert = gl.createShader(gl.VERTEX_SHADER)
 let frag = gl.createShader(gl.FRAGMENT_SHADER)
 let program = gl.createProgram()
+
 
 let vertcode = `#version 330
 uniform mat4 u_viewmatrix;
@@ -106,16 +107,19 @@ let viewmatrixLocation = gl.getUniformLocation(program, "u_viewmatrix");
 let pixelSizeLocation = gl.getUniformLocation(program, "u_pixelSize");
 console.log("locations", projmatrixLocation, viewmatrixLocation)
 
+
+
+// initlize points
 const NUM_POINTS = 1e6;
 const points = [];
 for (let index = 0; index < NUM_POINTS; index++) {
-  points.push((Math.random() - 0.5) * 2);
+  points.push((Math.random() - 0.5) * 2);         // what is this math for?
   points.push((Math.random() - 0.5) * 2);
   points.push((Math.random() - 0.5) * 2);
 }
 
 // Create a buffer.
-let vertices = new Float32Array(points);
+let vertices = new Float32Array(points); /// Verticies is the point positions?
 let buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW);
@@ -135,7 +139,10 @@ gl.vertexAttribPointer(positionLocation, elementsPerVertex, gl.FLOAT, normalize,
 let t = glfw.getTime();
 let fps = 60;
 
+
+
 function animate() {
+
 	if(glfw.windowShouldClose(window) || glfw.getKey(window, glfw.KEY_ESCAPE)) {
 		shutdown();
 	} else {
@@ -151,11 +158,14 @@ function animate() {
 	let dim = glfw.getFramebufferSize(window);
 	//if(wsize) console.log("FB size: "+wsize.width+', '+wsize.height);
 
+	
 	// update scene:
 	for (let i=0; i<NUM_POINTS/10; i++) {
 		let idx = Math.floor(Math.random() * vertices.length);
 		vertices[idx] += (Math.random()-0.5) * 0.1;
 	}
+
+
 	// update GPU buffers:
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW);
